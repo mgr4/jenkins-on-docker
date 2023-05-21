@@ -7,7 +7,7 @@ ENV JAVA_PATH "/usr/local/openjdk-11/bin"
 USER root
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y lsb-release git curl apt-transport-https ca-certificates software-properties-common
+RUN apt-get update && apt-get install -y lsb-release git curl apt-transport-https ca-certificates software-properties-common gnupg2 
 
 # Add Docker repository key
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
