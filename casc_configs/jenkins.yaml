@@ -1,0 +1,124 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n\n"
+  numExecutors: 0
+  scmCheckoutRetryCount: 2
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: ${JENKINS_ADMIN_ID}
+          password: ${JENKINS_ADMIN_PASSWORD}
+  authorizationStrategy:
+    globalMatrix:
+      permissions:
+        - "USER:Overall/Administer:${JENKINS_ADMIN_ID}"
+        - "GROUP:Overall/Read:authenticated"
+  # remotingSecurity:
+  #     enabled: true
+
+  nodes:
+    #   - permanent:
+    #       labelString: "linux docker test"
+    #       mode: NORMAL
+    #       name: "utility-node"
+    #       remoteFS: "/home/user1"
+    #       launcher:
+    #         inbound:
+    #           workDirSettings:
+    #             disabled: true
+    #             failIfWorkDirIsMissing: false
+    #             internalDir: "remoting"
+    #             workDirPath: "/tmp"
+
+    - permanent:
+        labelString: "linux docker test"
+        mode: NORMAL
+        name: "node-1"
+        numExecutors: 4
+        remoteFS: "/home/jenkins/ben"
+        launcher:
+          ssh:
+            host: "ben"
+            port: 22
+            credentialsId: ssh_with_passphrase_provided
+            launchTimeoutSeconds: 60
+            maxNumRetries: 3
+            retryWaitTime: 30
+            sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+
+security:
+  queueItemAuthenticator:
+    authenticators:
+      - global:
+          strategy: triggeringUsersAuthorizationStrategy
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-token"
+              username: ${GITHUB_USER}
+              password: ${GITHUB_TOKEN}
+              description: "github token"
+
+          - basicSSHUserPrivateKey:
+              scope: SYSTEM
+              id: ssh_with_passphrase_provided
+              username: jenkins
+              description: "SSH passphrase with private key file."
+              privateKeySource:
+                directEntry:
+                  privateKey: ${readFile:/var/jenkins_home/.ssh/id_rsa}
+
+        # # Another option passing via a file via ${readFile:/path/to/file}
+        # - basicSSHUserPrivateKey:
+        #     scope: SYSTEM
+        #     id: ssh_with_passphrase_provided_via_file
+        #     username: ssh_root
+        #     passphrase: "${SSH_KEY_PASSWORD}"
+        #     description: "SSH passphrase with private key file. Private key provided"
+        #     privateKeySource:
+        #       directEntry:
+        #         privateKey: "${readFile:${SSH_PRIVATE_FILE_PATH}}" # Path to file loaded from Environment Variable
+        # - usernamePassword:
+        #     scope: GLOBAL
+        #     id: "username"
+        #     username: "some-user"
+        #     password: "${SOME_USER_PASSWORD}"
+        #     description: "Username/Password Credentials for some-user"
+        # - string:
+        #     scope: GLOBAL
+        #     id: "secret-text"
+        #     secret: "${SECRET_TEXT}"
+        #     description: "Secret Text"
+        # - aws:
+        #     scope: GLOBAL
+        #     id: "AWS"
+        #     accessKey: "${AWS_ACCESS_KEY}"
+        #     secretKey: "${AWS_SECRET_ACCESS_KEY}"
+        #     description: "AWS Credentials"
+        # - file:
+        #     scope: GLOBAL
+        #     id: "secret-file"
+        #     fileName: "mysecretfile.txt"
+        #     secretBytes: "${base64:${readFile:${SECRET_FILE_PATH}}}" # secretBytes requires base64 encoded content
+        # - file:
+        #     scope: GLOBAL
+        #     id: "secret-file_via_binary_file"
+        #     fileName: "mysecretfile.txt"
+        #     secretBytes: "${readFileBase64:${SECRET_FILE_PATH}}" # secretBytes requires base64 encoded content
+        # - certificate:
+        #     scope: GLOBAL
+        #     id: "secret-certificate"
+        #     password: "${SECRET_PASSWORD_CERT}"
+        #     description: "my secret cert"
+        #     keyStoreSource:
+        #       uploaded:
+        #         uploadedKeystore: "${readFileBase64:${SECRET_CERT_FILE_PATH}}" # uploadedKeystore requires BINARY base64 encoded content
+
+unclassified:
+  location:
+    url: http://localhost:8080/
