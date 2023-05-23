@@ -46,7 +46,7 @@ jenkins:
             maxNumRetries: 3
             retryWaitTime: 30
             sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
-
+            
 security:
   queueItemAuthenticator:
     authenticators:
@@ -122,3 +122,29 @@ credentials:
 unclassified:
   location:
     url: http://localhost:8080/
+
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+      
+  groovy:
+    installations:
+    - name: "groovy49"
+      properties:
+      - installSource:
+          installers:
+          - groovyInstaller:
+              id: "4.0.9"
+  maven:
+    installations:
+    - name: "M3"
+      properties:
+      - installSource:
+          installers:
+          - maven:
+              id: "3.9.2"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
