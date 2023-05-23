@@ -20,4 +20,4 @@ docker-workflow:latest
 ssh-agent:latest
 groovy:latest
 job-dsl:latest
-
+maven-plugin:latest
